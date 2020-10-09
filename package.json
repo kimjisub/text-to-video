@@ -1,0 +1,34 @@
+{
+	"name": "text-to-video",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/kimjisub/text-to-video.git"
+	},
+	"author": "Kimjisub",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/kimjisub/text-to-video/issues"
+	},
+	"homepage": "https://github.com/kimjisub/text-to-video#readme",
+	"dependencies": {
+		"argparse": "^1.0.10",
+		"exceljs": "^3.0.0",
+		"fs-extra": "^8.1.0",
+		"md5-file": "^4.0.0",
+		"nodemon": "^1.19.3",
+		"nodeplotlib": "^0.6.4",
+		"progress": "^2.0.3",
+		"sf": "^0.2.0",
+		"sql-template-strings": "^2.2.2",
+		"sqlite": "^3.0.3"
+	},
+	"devDependencies": {
+		"eslint": "^6.5.1"
+	}
+}
