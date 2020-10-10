@@ -68,11 +68,12 @@ function Rendering() {
 						Promise.all(soundList).then((indices) => {
 							const tmpScriptSpeech = [];
 							scriptList.forEach((script, i) => {
-								console.log(soundPool.getDuration(i), script);
+								const index = indices[i];
+								console.log(soundPool.getDuration(index), script);
 								tmpScriptSpeech.push({
 									script,
-									index: indices[i],
-									duration: soundPool.getDuration(i),
+									index,
+									duration: soundPool.getDuration(index),
 								});
 							});
 							setScriptSpeech(tmpScriptSpeech);
