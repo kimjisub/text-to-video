@@ -24,17 +24,15 @@ function Rendering() {
 	const [imageSearch, setImageSearch] = useState(null);
 
 	const [scriptText, setScriptText] = useState(
-		"There is no place like home. Love will find a way. Slow and steady win the game. Life's not all gloom and despondency. Age does not protect you from love. Believe you can, then you will. If I have lost confidence in myself, I have the universe against me. Hold it high, look the world straight in the eye. Better the last smile than the first laughter. Behind the cloud is the sun still shining."
+		'There is no place like home. Love will find a way. ' //Slow and steady win the game. Life's not all gloom and despondency. Age does not protect you from love. Believe you can, then you will. If I have lost confidence in myself, I have the universe against me. Hold it high, look the world straight in the eye. Better the last smile than the first laughter. Behind the cloud is the sun still shining."
 	);
-	const [scriptSpeech, setScriptSpeech] = useState([]);
+	const [scriptAnalize, setScriptAnalize] = useState([]);
 
 	useEffect(() => {
 		setSoundPool(new SoundPool());
 		setKeyword(new Keyword());
 		setImageSearch(new ImageSearch());
 	}, []);
-
-	console.log(scriptSpeech);
 
 	return (
 		<div className="Rendering">
@@ -57,30 +55,69 @@ function Rendering() {
 					variant="contained"
 					onClick={() => {
 						const scriptList = scriptText
+							.trim()
 							.split('.')
 							.filter((s) => s.length > 0)
 							.map((s) => s.trim() + '.');
 
-						const soundList = scriptList.map((s) => soundPool.loadFromTTS(s));
+						const apiWork = scriptList.map((s) => soundPool.loadFromTTS(s));
 
-						setScriptSpeech([]);
+						setScriptAnalize([]);
 
-						Promise.all(soundList).then((indices) => {
-							const tmpScriptSpeech = [];
+						Promise.all(apiWork).then((indices) => {
+							const tmpScriptAnalize = [];
 							scriptList.forEach((script, i) => {
 								const index = indices[i];
-								console.log(soundPool.getDuration(index), script);
-								tmpScriptSpeech.push({
+								tmpScriptAnalize.push({
 									script,
 									index,
 									duration: soundPool.getDuration(index),
 								});
 							});
-							setScriptSpeech(tmpScriptSpeech);
+							setScriptAnalize(tmpScriptAnalize);
 						});
 					}}
 				>
 					TTS, 소리 길이 가져오기
+				</Button>
+				<Button
+					variant="contained"
+					onClick={() => {
+						const tmpScriptAnalize = [...scriptAnalize];
+
+						const apiWork = scriptAnalize.map((s) =>
+							keyword.getKeywords(s.script)
+						);
+
+						Promise.all(apiWork).then((keywordsList) => {
+							tmpScriptAnalize.forEach((s, i) => {
+								s.keywords = keywordsList[i];
+							});
+							setScriptAnalize(tmpScriptAnalize);
+						});
+					}}
+				>
+					키워드 가져오기
+				</Button>
+				<Button
+					variant="contained"
+					onClick={() => {
+						const tmpScriptAnalize = [...scriptAnalize];
+
+						const apiWork = scriptAnalize.map((s) =>
+							imageSearch.getImages(s.keywords[0])
+						);
+
+						Promise.all(apiWork).then((imagesList) => {
+							tmpScriptAnalize.forEach((s, i) => {
+								s.images = imagesList[i];
+							});
+							console.log(tmpScriptAnalize);
+							setScriptAnalize(tmpScriptAnalize);
+						});
+					}}
+				>
+					이미지 가져오기
 				</Button>
 			</div>
 
@@ -89,71 +126,42 @@ function Rendering() {
 					<TableHead>
 						<TableRow>
 							<TableCell>Index</TableCell>
+							<TableCell>Play</TableCell>
 							<TableCell>Script</TableCell>
 							<TableCell>Duration</TableCell>
+							<TableCell>Keyword</TableCell>
+							<TableCell>Image</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{scriptSpeech.map((row) => (
+						{scriptAnalize.map((row) => (
 							<TableRow key={row.index}>
 								<TableCell component="th" scope="row">
 									{row.index}
 								</TableCell>
+								<TableCell component="th" scope="row">
+									<IconButton
+										aria-label="delete"
+										onClick={() => {
+											soundPool.play(row.index);
+										}}
+									>
+										<VolumeUp />
+									</IconButton>
+								</TableCell>
 								<TableCell>{row.script}</TableCell>
 								<TableCell>{row.duration}</TableCell>
-								<IconButton
-									aria-label="delete"
-									onClick={() => {
-										soundPool.play(row.index);
-									}}
-								>
-									<VolumeUp />
-								</IconButton>
+								<TableCell>{row.keywords?.join()}</TableCell>
+								<TableCell>
+									{row.images ? (
+										<img alt="img" src={row.images[0]} width="100px"></img>
+									) : null}
+								</TableCell>
 							</TableRow>
 						))}
 					</TableBody>
 				</Table>
 			</TableContainer>
-
-			<button
-				onClick={() => {
-					soundPool
-						.loadFromTTS('Hello, world! My name is tts that in rakuten api.')
-						.then((id) => {
-							console.log(id);
-						});
-				}}
-			>
-				prepareTTS
-			</button>
-			<button
-				onClick={() => {
-					soundPool.play(0);
-				}}
-			>
-				playTTS
-			</button>
-			<button
-				onClick={() => {
-					keyword
-						.getKeyword(['Hello, world! My name is tts that in rakuten api.'])
-						.then((result) => {
-							console.log(result);
-						});
-				}}
-			>
-				test
-			</button>
-
-			<button
-				onClick={() => {
-					imageSearch.getImages('cat').then((result) => {
-						console.log(result);
-					});
-				}}
-			>
-				test
-			</button>
 		</div>
 	);
 }
