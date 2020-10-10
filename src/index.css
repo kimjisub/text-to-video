@@ -7,7 +7,22 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@font-face {
+  font-family: 'NanumSquare';
+  src: url("./font/NanumSquare_acB.ttf");
+}
+@font-face {
+  font-family: 'GmarketSansTTF';
+  src: url("./font/GmarketSansTTFLight.ttf");
+  font-weight: 300;
+}
+@font-face {
+  font-family: 'GmarketSansTTF';
+  src: url("./font/GmarketSansTTFMedium.ttf");
+  font-weight: 500;
+}
+@font-face {
+  font-family: 'GmarketSansTTF';
+  src: url("./font/GmarketSansTTFBold.ttf");
+  font-weight: 700;
 }
