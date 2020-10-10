@@ -1,6 +1,6 @@
 import unirest from 'unirest';
 
-export default class SoundPool {
+export default class Keyword {
 	async getKeyword(list) {
 		return new Promise((resolve, reject) => {
 			const req = unirest(

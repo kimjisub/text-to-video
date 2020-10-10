@@ -41,7 +41,7 @@ export default class SoundPool {
 		});
 	}
 
-	getLength(id) {
+	getDuration(id) {
 		const audioBuffer = this.loaded[id];
 		return audioBuffer.duration;
 	}
