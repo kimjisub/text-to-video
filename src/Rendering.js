@@ -16,12 +16,13 @@ import {
 	Paper,
 	IconButton,
 } from '@material-ui/core';
-import { VolumeUp } from '@material-ui/icons';
+import { VolumeUp, PlayArrow, Pause } from '@material-ui/icons';
 
 function Rendering() {
 	const [soundPool, setSoundPool] = useState(null);
 	const [keyword, setKeyword] = useState(null);
 	const [imageSearch, setImageSearch] = useState(null);
+	const [videoSeek, setVideoSeek] = useState(-1);
 
 	const [scriptText, setScriptText] = useState(
 		'There is no place like home. Love will find a way. ' //Slow and steady win the game. Life's not all gloom and despondency. Age does not protect you from love. Believe you can, then you will. If I have lost confidence in myself, I have the universe against me. Hold it high, look the world straight in the eye. Better the last smile than the first laughter. Behind the cloud is the sun still shining."
@@ -33,6 +34,16 @@ function Rendering() {
 		setKeyword(new Keyword());
 		setImageSearch(new ImageSearch());
 	}, []);
+
+	useEffect(() => {
+		if (0 <= videoSeek && videoSeek < scriptAnalize.length) {
+			const obj = scriptAnalize[videoSeek];
+			soundPool.play(obj.index);
+			setTimeout(() => {
+				setVideoSeek(videoSeek + 1);
+			}, obj.duration * 1000);
+		}
+	}, [videoSeek, soundPool, scriptAnalize]);
 
 	return (
 		<div className="Rendering">
@@ -120,48 +131,72 @@ function Rendering() {
 					이미지 가져오기
 				</Button>
 			</div>
-
-			<TableContainer component={Paper}>
-				<Table aria-label="simple table" size="small">
-					<TableHead>
-						<TableRow>
-							<TableCell>Index</TableCell>
-							<TableCell>Play</TableCell>
-							<TableCell>Script</TableCell>
-							<TableCell>Duration</TableCell>
-							<TableCell>Keyword</TableCell>
-							<TableCell>Image</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{scriptAnalize.map((row) => (
-							<TableRow key={row.index}>
-								<TableCell component="th" scope="row">
-									{row.index}
-								</TableCell>
-								<TableCell component="th" scope="row">
-									<IconButton
-										aria-label="delete"
-										onClick={() => {
-											soundPool.play(row.index);
-										}}
-									>
-										<VolumeUp />
-									</IconButton>
-								</TableCell>
-								<TableCell>{row.script}</TableCell>
-								<TableCell>{row.duration}</TableCell>
-								<TableCell>{row.keywords?.join()}</TableCell>
-								<TableCell>
-									{row.images ? (
-										<img alt="img" src={row.images[0]} width="100px"></img>
-									) : null}
-								</TableCell>
+			<div>
+				<TableContainer component={Paper}>
+					<Table aria-label="simple table" size="small">
+						<TableHead>
+							<TableRow>
+								<TableCell>Play</TableCell>
+								<TableCell>Index</TableCell>
+								<TableCell>Audio</TableCell>
+								<TableCell>Script</TableCell>
+								<TableCell>Duration</TableCell>
+								<TableCell>Keyword</TableCell>
+								<TableCell>Image</TableCell>
 							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</TableContainer>
+						</TableHead>
+						<TableBody>
+							{scriptAnalize.map((row, i) => (
+								<TableRow key={i} selected={i === videoSeek}>
+									<TableCell component="th" scope="row">
+										<IconButton
+											onClick={() => {
+												if (i !== videoSeek) setVideoSeek(i);
+												else setVideoSeek(-1);
+											}}
+										>
+											{i === videoSeek ? <Pause /> : <PlayArrow />}
+										</IconButton>
+									</TableCell>
+									<TableCell component="th" scope="row">
+										{i + 1}
+									</TableCell>
+									<TableCell component="th" scope="row">
+										<IconButton
+											onClick={() => {
+												soundPool.play(row.index);
+											}}
+										>
+											<VolumeUp />
+										</IconButton>
+									</TableCell>
+									<TableCell>{row.script}</TableCell>
+									<TableCell>{row.duration}</TableCell>
+									<TableCell>{row.keywords?.join()}</TableCell>
+									<TableCell>
+										{row.images ? (
+											<img alt="img" src={row.images[0]} width="100px"></img>
+										) : null}
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</TableContainer>
+			</div>
+			<div>
+				<img
+					alt="img"
+					src={
+						0 <= videoSeek &&
+						videoSeek < scriptAnalize.length &&
+						scriptAnalize[videoSeek].images
+							? scriptAnalize[videoSeek].images[0]
+							: null
+					}
+					width="500px"
+				></img>
+			</div>
 		</div>
 	);
 }
