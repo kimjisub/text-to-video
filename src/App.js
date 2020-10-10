@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import SoundPool from './SoundPool';
+import SoundPool from './api/SoundPool';
 
 function App() {
-	const [audio, setAudio] = useState('');
 	const [soundPool, setSoundPool] = useState(null);
 
 	useEffect(() => {
