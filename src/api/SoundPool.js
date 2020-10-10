@@ -1,4 +1,4 @@
-module.exports = class SoundPool {
+export default class SoundPool {
 	constructor() {
 		this.context = new AudioContext();
 		this.loaded = [];
@@ -14,8 +14,6 @@ module.exports = class SoundPool {
 				text
 			)}`;
 
-			let Buffer;
-
 			window
 				.fetch(URL, {
 					headers: {
@@ -27,7 +25,6 @@ module.exports = class SoundPool {
 				.then((response) => response.arrayBuffer())
 				.then((arrayBuffer) => this.context.decodeAudioData(arrayBuffer))
 				.then((audioBuffer) => {
-					Buffer = audioBuffer;
 					this.loaded.push(audioBuffer);
 					resolve(this.loaded.length - 1);
 				});
@@ -43,4 +40,9 @@ module.exports = class SoundPool {
 			source.start();
 		});
 	}
-};
+
+	getLength(id) {
+		const audioBuffer = this.loaded[id];
+		return audioBuffer.duration;
+	}
+}
