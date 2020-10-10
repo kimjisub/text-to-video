@@ -40,6 +40,7 @@ function App() {
 				<button
 					onClick={() => {
 						soundPool.play(0);
+						console.log(soundPool.getLength(0));
 					}}
 				>
 					playTTS

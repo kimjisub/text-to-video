@@ -43,4 +43,9 @@ module.exports = class SoundPool {
 			source.start();
 		});
 	}
+
+	getLength(id) {
+		const audioBuffer = this.loaded[id];
+		return audioBuffer.duration;
+	}
 };
