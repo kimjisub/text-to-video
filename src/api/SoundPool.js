@@ -8,7 +8,7 @@ export default class SoundPool {
 		//todo
 	}
 
-	loadFromTTS(text) {
+	async loadFromTTS(text) {
 		return new Promise((resolve, reject) => {
 			const URL = `https://voicerss-text-to-speech.p.rapidapi.com/?r=0&c=mp3&f=24khz_16bit_mono&hl=en-us&key=6f63530c27aa4ea788b0645e276e6013&src=${encodeURIComponent(
 				text
@@ -31,7 +31,7 @@ export default class SoundPool {
 		});
 	}
 
-	play(id) {
+	async play(id) {
 		return new Promise((resolve, reject) => {
 			const audioBuffer = this.loaded[id];
 			const source = this.context.createBufferSource();

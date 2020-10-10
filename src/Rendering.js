@@ -1,12 +1,18 @@
 import './Rendering.css';
 import React, { useState, useEffect } from 'react';
 import SoundPool from './api/SoundPool';
+import Keyword from './api/Keyword';
 
 function Rendering() {
 	const [soundPool, setSoundPool] = useState(null);
+	const [keyword, setKeyword] = useState(null);
 
 	useEffect(() => {
 		setSoundPool(new SoundPool());
+	}, []);
+
+	useEffect(() => {
+		setKeyword(new Keyword());
 	}, []);
 
 	return (
@@ -28,6 +34,17 @@ function Rendering() {
 				}}
 			>
 				playTTS
+			</button>
+			<button
+				onClick={() => {
+					keyword
+						.getKeyword(['Hello, world! My name is tts that in rakuten api.'])
+						.then((result) => {
+							console.log(result);
+						});
+				}}
+			>
+				test
 			</button>
 		</div>
 	);
