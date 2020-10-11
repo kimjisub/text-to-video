@@ -18,6 +18,7 @@ import {
 } from '@material-ui/core';
 import { VolumeUp, PlayArrow, Pause } from '@material-ui/icons';
 
+let timeout = -1;
 function Rendering() {
 	const [soundPool, setSoundPool] = useState(null);
 	const [keyword, setKeyword] = useState(null);
@@ -39,9 +40,15 @@ function Rendering() {
 		if (0 <= videoSeek && videoSeek < scriptAnalize.length) {
 			const obj = scriptAnalize[videoSeek];
 			soundPool.play(obj.index);
-			setTimeout(() => {
-				setVideoSeek(videoSeek + 1);
+			timeout = setTimeout(() => {
+				if (scriptAnalize.length - 1 <= videoSeek) setVideoSeek(-1);
+				else setVideoSeek(videoSeek + 1);
 			}, obj.duration * 1000);
+		} else {
+			if (soundPool) {
+				clearTimeout(timeout);
+				soundPool.stopAll();
+			}
 		}
 	}, [videoSeek, soundPool, scriptAnalize]);
 

@@ -2,6 +2,7 @@ export default class SoundPool {
 	constructor() {
 		this.context = new AudioContext();
 		this.loaded = [];
+		this.playing = {};
 	}
 
 	load() {
@@ -37,8 +38,22 @@ export default class SoundPool {
 			const source = this.context.createBufferSource();
 			source.buffer = audioBuffer;
 			source.connect(this.context.destination);
+			this.playing[id] = source;
 			source.start();
+			setTimeout(() => {
+				source.stop();
+				delete this.playing[id];
+				resolve();
+			}, this.getDuration(id) * 1000);
 		});
+	}
+
+	stopAll() {
+		console.log('stopAll');
+		for (let i in this.playing) {
+			const source = this.playing[i];
+			source.stop();
+		}
 	}
 
 	getDuration(id) {
