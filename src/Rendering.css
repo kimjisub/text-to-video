@@ -1,3 +1,23 @@
 .Rendering {
 	height: 85vh;
 }
+
+.script_box {
+  border-image-source: linear-gradient(to right, #ff5f6d, #ffc371);
+  border-image-slice: 1;
+}
+.flexible {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.flex_col {
+  flex-direction: column;
+}
+.flex_col > button {
+  width: 15vw;
+  border-radius: 10px;
+  background: linear-gradient(to right, #ff5f6d, #ffc371);
+  color: white;
+  margin: 5px 20px;
+}

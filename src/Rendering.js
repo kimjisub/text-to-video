@@ -17,6 +17,30 @@ import {
 	IconButton,
 } from '@material-ui/core';
 import { VolumeUp, PlayArrow, Pause } from '@material-ui/icons';
+import { makeStyles } from '@material-ui/core/styles';
+import { green } from '@material-ui/core/colors';
+
+const useStyles = makeStyles({
+  scriptBox: {
+    borderImageSource: 'linear-gradient(to right, #ff5f6d, #ffc371)',
+    borderImageSlice: 1,
+    borderRadius: 3,
+    width: '60vw',
+  },
+  videoBox: {
+    width: '38vw',
+    display: 'inline-block',
+    border: '1px solid #818181',
+    marginTop: '60px',
+    marginRight: '50px',
+    height: '40vh',
+  },
+  tableBox: {
+    width: '38vw',
+    alignSelf: 'flex-start',
+    marginTop: '40px',
+  },
+}); 
 
 function Rendering() {
 	const [soundPool, setSoundPool] = useState(null);
@@ -27,7 +51,7 @@ function Rendering() {
 	const [scriptText, setScriptText] = useState(
 		'There is no place like home. Love will find a way. ' //Slow and steady win the game. Life's not all gloom and despondency. Age does not protect you from love. Believe you can, then you will. If I have lost confidence in myself, I have the universe against me. Hold it high, look the world straight in the eye. Better the last smile than the first laughter. Behind the cloud is the sun still shining."
 	);
-	const [scriptAnalize, setScriptAnalize] = useState([]);
+  const [scriptAnalize, setScriptAnalize] = useState([]);
 
 	useEffect(() => {
 		setSoundPool(new SoundPool());
@@ -43,96 +67,110 @@ function Rendering() {
 				setVideoSeek(videoSeek + 1);
 			}, obj.duration * 1000);
 		}
-	}, [videoSeek, soundPool, scriptAnalize]);
+  }, [videoSeek, soundPool, scriptAnalize]);
+  
+  const classes = useStyles();
 
 	return (
 		<div className="Rendering">
-			<div>
+			<div className="flexible">
 				<TextField
-					id="outlined-multiline-static"
-					label="대본"
+          id="outlined-multiline-static"
+          className={classes.scriptBox}
+					label="SCRIPT"
 					multiline
-					rows={4}
+					rows={5}
 					variant="outlined"
-					defaultValue={scriptText}
-					onChange={(event) => {
+          defaultValue={scriptText}
+					onChange={(event) => {  
 						setScriptText(event.target.value);
 					}}
 				/>
+        <div className="flexible flex_col">
+          <Button
+            variant="contained"
+            onClick={() => {
+              const scriptList = scriptText
+                .trim()
+                .split('.')
+                .filter((s) => s.length > 0)
+                .map((s) => s.trim() + '.');
+
+              const apiWork = scriptList.map((s) => soundPool.loadFromTTS(s));
+
+              setScriptAnalize([]);
+
+              Promise.all(apiWork).then((indices) => {
+                const tmpScriptAnalize = [];
+                scriptList.forEach((script, i) => {
+                  const index = indices[i];
+                  tmpScriptAnalize.push({
+                    script,
+                    index,
+                    duration: soundPool.getDuration(index),
+                  });
+                });
+                setScriptAnalize(tmpScriptAnalize);
+              });
+            }}
+          >
+            TTS, 소리 길이 가져오기
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              const tmpScriptAnalize = [...scriptAnalize];
+
+              const apiWork = scriptAnalize.map((s) =>
+                keyword.getKeywords(s.script)
+              );
+
+              Promise.all(apiWork).then((keywordsList) => {
+                tmpScriptAnalize.forEach((s, i) => {
+                  s.keywords = keywordsList[i];
+                });
+                setScriptAnalize(tmpScriptAnalize);
+              });
+            }}
+          >
+            키워드 가져오기
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              const tmpScriptAnalize = [...scriptAnalize];
+
+              const apiWork = scriptAnalize.map((s) =>
+                imageSearch.getImages(s.keywords[0])
+              );
+
+              Promise.all(apiWork).then((imagesList) => {
+                tmpScriptAnalize.forEach((s, i) => {
+                  s.images = imagesList[i];
+                });
+                console.log(tmpScriptAnalize);
+                setScriptAnalize(tmpScriptAnalize);
+              });
+            }}
+          >
+            이미지 가져오기
+          </Button>
+        </div>
 			</div>
-
-			<div>
-				<Button
-					variant="contained"
-					onClick={() => {
-						const scriptList = scriptText
-							.trim()
-							.split('.')
-							.filter((s) => s.length > 0)
-							.map((s) => s.trim() + '.');
-
-						const apiWork = scriptList.map((s) => soundPool.loadFromTTS(s));
-
-						setScriptAnalize([]);
-
-						Promise.all(apiWork).then((indices) => {
-							const tmpScriptAnalize = [];
-							scriptList.forEach((script, i) => {
-								const index = indices[i];
-								tmpScriptAnalize.push({
-									script,
-									index,
-									duration: soundPool.getDuration(index),
-								});
-							});
-							setScriptAnalize(tmpScriptAnalize);
-						});
-					}}
-				>
-					TTS, 소리 길이 가져오기
-				</Button>
-				<Button
-					variant="contained"
-					onClick={() => {
-						const tmpScriptAnalize = [...scriptAnalize];
-
-						const apiWork = scriptAnalize.map((s) =>
-							keyword.getKeywords(s.script)
-						);
-
-						Promise.all(apiWork).then((keywordsList) => {
-							tmpScriptAnalize.forEach((s, i) => {
-								s.keywords = keywordsList[i];
-							});
-							setScriptAnalize(tmpScriptAnalize);
-						});
-					}}
-				>
-					키워드 가져오기
-				</Button>
-				<Button
-					variant="contained"
-					onClick={() => {
-						const tmpScriptAnalize = [...scriptAnalize];
-
-						const apiWork = scriptAnalize.map((s) =>
-							imageSearch.getImages(s.keywords[0])
-						);
-
-						Promise.all(apiWork).then((imagesList) => {
-							tmpScriptAnalize.forEach((s, i) => {
-								s.images = imagesList[i];
-							});
-							console.log(tmpScriptAnalize);
-							setScriptAnalize(tmpScriptAnalize);
-						});
-					}}
-				>
-					이미지 가져오기
-				</Button>
-			</div>
-			<div>
-				<TableContainer component={Paper}>
+			<div className="flexible">
+        <div className={classes.videoBox}>
+          <img
+            alt="img"
+            src={
+              0 <= videoSeek &&
+              videoSeek < scriptAnalize.length &&
+              scriptAnalize[videoSeek].images
+                ? scriptAnalize[videoSeek].images[0]
+                : null
+            }
+          ></img>
+        </div>
+				<TableContainer component={Paper} className={classes.tableBox}>
 					<Table aria-label="simple table" size="small">
 						<TableHead>
 							<TableRow>
@@ -178,19 +216,6 @@ function Rendering() {
 						</TableBody>
 					</Table>
 				</TableContainer>
-			</div>
-			<div>
-				<img
-					alt="img"
-					src={
-						0 <= videoSeek &&
-						videoSeek < scriptAnalize.length &&
-						scriptAnalize[videoSeek].images
-							? scriptAnalize[videoSeek].images[0]
-							: null
-					}
-					width="500px"
-				></img>
 			</div>
 		</div>
 	);
