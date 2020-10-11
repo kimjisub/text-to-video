@@ -15,6 +15,10 @@ import {
 	TableBody,
 	Paper,
 	IconButton,
+	Select,
+	MenuItem,
+	InputLabel,
+	FormControl,
 } from '@material-ui/core';
 import { VolumeUp, PlayArrow, Pause } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
@@ -44,6 +48,13 @@ const useStyles = makeStyles({
 	},
 });
 
+const scripts = {
+	'covid-19':
+		'As of the Chuseok and Hangeul Day holidays, the confirmed coronavirus 19 (COVID-19) remains in double digits. So there is a growing likelihood that the government will ease the distancing steps applied from the 12th.',
+	flower:
+		'You can cut all the flowers. but you can not keep spring from coming.',
+};
+
 let timeout = -1;
 function Rendering() {
 	const [soundPool, setSoundPool] = useState(null);
@@ -52,9 +63,7 @@ function Rendering() {
 	const [videoSeek, setVideoSeek] = useState(-1);
 	const [step, setStep] = useState(0);
 
-	const [scriptText, setScriptText] = useState(
-		'Cars are not software on wheels yet. but the tech is heading that way as owners demand more features.'
-	);
+	const [scriptText, setScriptText] = useState('');
 	const [scriptAnalize, setScriptAnalize] = useState([]);
 
 	useEffect(() => {
@@ -89,18 +98,31 @@ function Rendering() {
 	return (
 		<div className="Rendering">
 			<div className="flexible">
-				<TextField
-					id="outlined-multiline-static"
-					className={classes.scriptBox}
-					label="SCRIPT"
-					multiline
-					rows={5}
-					variant="outlined"
-					defaultValue={scriptText}
-					onChange={(event) => {
-						setScriptText(event.target.value);
-					}}
-				/>
+				<div className="flexible flex_col">
+					<FormControl className={classes.formControl}>
+						<InputLabel id="demo-simple-select-label">Select Preset</InputLabel>
+						<Select
+							onChange={(event) => {
+								setScriptText(scripts[event.target.value]);
+							}}
+						>
+							<MenuItem value="covid-19">Covid-19</MenuItem>
+							<MenuItem value="flower">Flower</MenuItem>
+						</Select>
+					</FormControl>
+					<TextField
+						id="outlined-multiline-static"
+						className={classes.scriptBox}
+						label="SCRIPT"
+						multiline
+						rows={5}
+						variant="outlined"
+						value={scriptText}
+						onChange={(event) => {
+							setScriptText(event.target.value);
+						}}
+					/>
+				</div>
 				<div className="flexible flex_col">
 					<Button
 						variant="contained"
@@ -222,15 +244,13 @@ function Rendering() {
 											{i === videoSeek ? <Pause /> : <PlayArrow />}
 										</IconButton>
 									</TableCell>
-									<TableCell>
-										<IconButton
-											onClick={() => {
-												soundPool.play(row.index);
-											}}
-										>
-											<VolumeUp />
-										</IconButton>
-										{row.script}
+									<TableCell
+										style={{ cursor: 'pointer' }}
+										onClick={() => {
+											soundPool.play(row.index);
+										}}
+									>
+										<div>{row.script}</div>
 									</TableCell>
 									<TableCell>{row.duration}</TableCell>
 									<TableCell>{row.keywords?.join()}</TableCell>
