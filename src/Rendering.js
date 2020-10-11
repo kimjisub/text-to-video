@@ -108,6 +108,7 @@ function Rendering() {
 								setScriptText(scripts[event.target.value]);
 							}}
 						>
+							<MenuItem value="">Custom</MenuItem>
 							{Object.keys(scripts).map((k) => (
 								<MenuItem value={k} key={k}>
 									{k}
