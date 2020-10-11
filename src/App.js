@@ -8,11 +8,7 @@ function App() {
 			<header className="App-header">
 				<img src={logo} className="App-logo" alt="logo" />
 				<div className="navigator">
-					<div>
-						RENDERING
-						<div className="underline"></div>
-					</div>
-					<div>ABOUT US</div>
+					<div>TTV: Text to Video</div>
 				</div>
 			</header>
 		</div>

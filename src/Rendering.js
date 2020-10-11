@@ -53,7 +53,7 @@ function Rendering() {
 	const [step, setStep] = useState(0);
 
 	const [scriptText, setScriptText] = useState(
-		'Junction X Seoul was held on October 9. It involves many designers and developers. JunctionX Seoul hackathon was going online, due to the COVID-19 outbreak. Junction X Seoul has 4 tracks microsoft, sia, rakuten API and naver-z. It has 5 missions, and now it has even done mission 3. It has various events like yoga. Participating in the event gives a lot of gifts. It ends on October 11.' //Slow and steady win the game. Life's not all gloom and despondency. Age does not protect you from love. Believe you can, then you will. If I have lost confidence in myself, I have the universe against me. Hold it high, look the world straight in the eye. Better the last smile than the first laughter. Behind the cloud is the sun still shining."
+		'Cars are not software on wheels yet. but the tech is heading that way as owners demand more features.'
 	);
 	const [scriptAnalize, setScriptAnalize] = useState([]);
 
