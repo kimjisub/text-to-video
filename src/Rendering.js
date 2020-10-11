@@ -42,11 +42,13 @@ const useStyles = makeStyles({
   },
 }); 
 
+let timeout = -1;
 function Rendering() {
 	const [soundPool, setSoundPool] = useState(null);
 	const [keyword, setKeyword] = useState(null);
 	const [imageSearch, setImageSearch] = useState(null);
 	const [videoSeek, setVideoSeek] = useState(-1);
+	const [step, setStep] = useState(0);
 
 	const [scriptText, setScriptText] = useState(
 		'There is no place like home. Love will find a way. ' //Slow and steady win the game. Life's not all gloom and despondency. Age does not protect you from love. Believe you can, then you will. If I have lost confidence in myself, I have the universe against me. Hold it high, look the world straight in the eye. Better the last smile than the first laughter. Behind the cloud is the sun still shining."
@@ -63,9 +65,15 @@ function Rendering() {
 		if (0 <= videoSeek && videoSeek < scriptAnalize.length) {
 			const obj = scriptAnalize[videoSeek];
 			soundPool.play(obj.index);
-			setTimeout(() => {
-				setVideoSeek(videoSeek + 1);
+			timeout = setTimeout(() => {
+				if (scriptAnalize.length - 1 <= videoSeek) setVideoSeek(-1);
+				else setVideoSeek(videoSeek + 1);
 			}, obj.duration * 1000);
+		} else {
+			if (soundPool) {
+				clearTimeout(timeout);
+				soundPool.stopAll();
+			}
 		}
   }, [videoSeek, soundPool, scriptAnalize]);
   
@@ -124,7 +132,7 @@ function Rendering() {
               const apiWork = scriptAnalize.map((s) =>
                 keyword.getKeywords(s.script)
               );
-
+              
               Promise.all(apiWork).then((keywordsList) => {
                 tmpScriptAnalize.forEach((s, i) => {
                   s.keywords = keywordsList[i];
