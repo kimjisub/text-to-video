@@ -41,6 +41,13 @@ export default class SoundPool {
 		});
 	}
 
+	stopAll() {
+		for (let i in this.playing) {
+			const source = this.playing[i];
+			source.stop();
+		}
+	}
+
 	getDuration(id) {
 		const audioBuffer = this.loaded[id];
 		return audioBuffer.duration;

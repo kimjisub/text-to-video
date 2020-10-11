@@ -18,29 +18,28 @@ import {
 } from '@material-ui/core';
 import { VolumeUp, PlayArrow, Pause } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
-import { green } from '@material-ui/core/colors';
 
 const useStyles = makeStyles({
-  scriptBox: {
-    borderImageSource: 'linear-gradient(to right, #ff5f6d, #ffc371)',
-    borderImageSlice: 1,
-    borderRadius: 3,
-    width: '60vw',
-  },
-  videoBox: {
-    width: '38vw',
-    display: 'inline-block',
-    border: '1px solid #818181',
-    marginTop: '60px',
-    marginRight: '50px',
-    height: '40vh',
-  },
-  tableBox: {
-    width: '38vw',
-    alignSelf: 'flex-start',
-    marginTop: '40px',
-  },
-}); 
+	scriptBox: {
+		borderImageSource: 'linear-gradient(to right, #ff5f6d, #ffc371)',
+		borderImageSlice: 1,
+		borderRadius: 3,
+		width: '60vw',
+	},
+	videoBox: {
+		width: '38vw',
+		display: 'inline-block',
+		border: '1px solid #818181',
+		marginTop: '60px',
+		marginRight: '50px',
+		height: '40vh',
+	},
+	tableBox: {
+		width: '38vw',
+		alignSelf: 'flex-start',
+		marginTop: '40px',
+	},
+});
 
 let timeout = -1;
 function Rendering() {
@@ -53,7 +52,7 @@ function Rendering() {
 	const [scriptText, setScriptText] = useState(
 		'There is no place like home. Love will find a way. ' //Slow and steady win the game. Life's not all gloom and despondency. Age does not protect you from love. Believe you can, then you will. If I have lost confidence in myself, I have the universe against me. Hold it high, look the world straight in the eye. Better the last smile than the first laughter. Behind the cloud is the sun still shining."
 	);
-  const [scriptAnalize, setScriptAnalize] = useState([]);
+	const [scriptAnalize, setScriptAnalize] = useState([]);
 
 	useEffect(() => {
 		setSoundPool(new SoundPool());
@@ -75,109 +74,125 @@ function Rendering() {
 				soundPool.stopAll();
 			}
 		}
-  }, [videoSeek, soundPool, scriptAnalize]);
-  
-  const classes = useStyles();
+	}, [videoSeek, soundPool, scriptAnalize]);
+
+	useEffect(() => {
+		console.log(scriptAnalize);
+	}, [scriptAnalize]);
+
+	const classes = useStyles();
 
 	return (
 		<div className="Rendering">
 			<div className="flexible">
 				<TextField
-          id="outlined-multiline-static"
-          className={classes.scriptBox}
+					id="outlined-multiline-static"
+					className={classes.scriptBox}
 					label="SCRIPT"
 					multiline
 					rows={5}
 					variant="outlined"
-          defaultValue={scriptText}
-					onChange={(event) => {  
+					defaultValue={scriptText}
+					onChange={(event) => {
 						setScriptText(event.target.value);
 					}}
 				/>
-        <div className="flexible flex_col">
-          <Button
-            variant="contained"
-            onClick={() => {
-              const scriptList = scriptText
-                .trim()
-                .split('.')
-                .filter((s) => s.length > 0)
-                .map((s) => s.trim() + '.');
+				<div className="flexible flex_col">
+					<Button
+						variant="contained"
+						onClick={() => {
+							const scriptList = scriptText
+								.trim()
+								.split('.')
+								.filter((s) => s.length > 0)
+								.map((s) => s.trim() + '.');
 
-              const apiWork = scriptList.map((s) => soundPool.loadFromTTS(s));
+							const apiWork = scriptList.map((s) => soundPool.loadFromTTS(s));
 
-              setScriptAnalize([]);
+							setScriptAnalize([]);
 
-              Promise.all(apiWork).then((indices) => {
-                const tmpScriptAnalize = [];
-                scriptList.forEach((script, i) => {
-                  const index = indices[i];
-                  tmpScriptAnalize.push({
-                    script,
-                    index,
-                    duration: soundPool.getDuration(index).toFixed(1),
-                  });
-                });
-                setScriptAnalize(tmpScriptAnalize);
-              });
-            }}
-          >
-            Bring TTS, Sound length
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => {
-              const tmpScriptAnalize = [...scriptAnalize];
+							Promise.all(apiWork).then((indices) => {
+								const tmpScriptAnalize = [];
+								scriptList.forEach((script, i) => {
+									const index = indices[i];
+									tmpScriptAnalize.push({
+										script,
+										index,
+										duration: soundPool.getDuration(index).toFixed(1),
+									});
+								});
+								setScriptAnalize(tmpScriptAnalize);
+								setStep(1);
+							});
+						}}
+					>
+						Bring TTS, Sound length
+					</Button>
+					<Button
+						variant="contained"
+						disabled={!(step >= 1)}
+						onClick={() => {
+							const tmpScriptAnalize = [...scriptAnalize];
 
-              const apiWork = scriptAnalize.map((s) =>
-                keyword.getKeywords(s.script)
-              );
+							const apiWork = scriptAnalize.map((s) =>
+								keyword.getKeywords(s.script)
+							);
 
-              Promise.all(apiWork).then((keywordsList) => {
-                tmpScriptAnalize.forEach((s, i) => {
-                  s.keywords = keywordsList[i];
-                });
-                setScriptAnalize(tmpScriptAnalize);
-              });
-            }}
-          >
-            Bring Keyword
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => {
-              const tmpScriptAnalize = [...scriptAnalize];
+							Promise.all(apiWork).then((keywordsList) => {
+								tmpScriptAnalize.forEach((s, i) => {
+									s.keywords = keywordsList[i];
+								});
+								setScriptAnalize(tmpScriptAnalize);
+								setStep(2);
+							});
+						}}
+					>
+						Bring Keyword
+					</Button>
+					<Button
+						variant="contained"
+						disabled={!(step >= 2)}
+						onClick={async () => {
+							//const tmpScriptAnalize = [...scriptAnalize];
 
-              const apiWork = scriptAnalize.map((s) =>
-                imageSearch.getImages(s.keywords[0])
-              );
+							// const apiWork = scriptAnalize.map((s) =>
+							// 	imageSearch.getImages(s.keywords[0])
+							// );
 
-              Promise.all(apiWork).then((imagesList) => {
-                tmpScriptAnalize.forEach((s, i) => {
-                  s.images = imagesList[i];
-                });
-                console.log(tmpScriptAnalize);
-                setScriptAnalize(tmpScriptAnalize);
-              });
-            }}
-          >
-            Bring Images
-          </Button>
-        </div>
+							// Promise.all(apiWork).then((imagesList) => {
+							// 	tmpScriptAnalize.forEach((s, i) => {
+							// 		s.images = imagesList[i];
+							// 	});
+							// 	console.log(tmpScriptAnalize);
+							// 	setScriptAnalize(tmpScriptAnalize);
+							// 	setStep(3);
+							// });
+
+							for (let i in scriptAnalize) {
+								const script = scriptAnalize[i];
+								script.images = await imageSearch.getImages(script.keywords[0]);
+								setScriptAnalize(scriptAnalize);
+							}
+							setStep(3);
+						}}
+					>
+						Bring Images
+					</Button>
+				</div>
 			</div>
 			<div className="flexible">
-        <div className={classes.videoBox}>
-          <img
-            alt="img"
-            src={
-              0 <= videoSeek &&
-              videoSeek < scriptAnalize.length &&
-              scriptAnalize[videoSeek].images
-                ? scriptAnalize[videoSeek].images[0]
-                : null
-            }
-          ></img>
-        </div>
+				<div className={classes.videoBox}>
+					<img
+						alt="img"
+						src={
+							0 <= videoSeek &&
+							videoSeek < scriptAnalize.length &&
+							scriptAnalize[videoSeek].images
+								? scriptAnalize[videoSeek].images[0]
+								: null
+						}
+					></img>
+				</div>
 				<TableContainer component={Paper} className={classes.tableBox}>
 					<Table aria-label="simple table" size="small">
 						<TableHead>
