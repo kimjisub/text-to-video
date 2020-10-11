@@ -20,10 +20,15 @@ import {
 	InputLabel,
 	FormControl,
 } from '@material-ui/core';
-import { PlayArrow, Pause } from '@material-ui/icons';
+import { VolumeUp, PlayArrow, Pause } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
+	formControl: {
+		width: '30vw',
+		marginLeft: '11.5vw',
+		marginBottom: '30px',
+	},
 	scriptBox: {
 		borderImageSource: 'linear-gradient(to right, #ff5f6d, #ffc371)',
 		borderImageSlice: 1,
@@ -40,6 +45,7 @@ const useStyles = makeStyles({
 	},
 	videoImg: {
 		width: '38vw',
+		height: '40vh',
 	},
 	tableBox: {
 		width: '38vw',
@@ -49,12 +55,10 @@ const useStyles = makeStyles({
 });
 
 const scripts = {
-	'Covid-19':
+	'covid-19':
 		'As of the Chuseok and Hangeul Day holidays, the confirmed coronavirus 19 (COVID-19) remains in double digits. So there is a growing likelihood that the government will ease the distancing steps applied from the 12th.',
-	Flower:
+	flower:
 		'You can cut all the flowers. but you can not keep spring from coming.',
-	Phrase:
-		"There is no place like home. Love will find a way. Slow and steady win the game. Life's not all gloom and despondency. Age does not protect you from love. Believe you can, then you will. If I have lost confidence in myself, I have the universe against me. Hold it high, look the world straight in the eye. Better the last smile than the first laughter. Behind the cloud is the sun still shining. ",
 };
 
 let timeout = -1;
@@ -99,23 +103,21 @@ function Rendering() {
 
 	return (
 		<div className="Rendering">
+			<div>
+				<FormControl className={classes.formControl}>
+					<InputLabel id="demo-simple-select-label">Select Preset</InputLabel>
+					<Select
+						onChange={(event) => {
+							setScriptText(scripts[event.target.value]);
+						}}
+					>
+						<MenuItem value="covid-19">Covid-19</MenuItem>
+						<MenuItem value="flower">Flower</MenuItem>
+					</Select>
+				</FormControl>
+			</div>
 			<div className="flexible">
 				<div className="flexible flex_col">
-					<FormControl className={classes.formControl}>
-						<InputLabel id="demo-simple-select-label">Select Preset</InputLabel>
-						<Select
-							onChange={(event) => {
-								setScriptText(scripts[event.target.value]);
-							}}
-						>
-							<MenuItem value="">Custom</MenuItem>
-							{Object.keys(scripts).map((k) => (
-								<MenuItem value={k} key={k}>
-									{k}
-								</MenuItem>
-							))}
-						</Select>
-					</FormControl>
 					<TextField
 						id="outlined-multiline-static"
 						className={classes.scriptBox}
