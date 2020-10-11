@@ -24,6 +24,7 @@ function Rendering() {
 	const [keyword, setKeyword] = useState(null);
 	const [imageSearch, setImageSearch] = useState(null);
 	const [videoSeek, setVideoSeek] = useState(-1);
+	const [step, setStep] = useState(0);
 
 	const [scriptText, setScriptText] = useState(
 		'There is no place like home. Love will find a way. ' //Slow and steady win the game. Life's not all gloom and despondency. Age does not protect you from love. Believe you can, then you will. If I have lost confidence in myself, I have the universe against me. Hold it high, look the world straight in the eye. Better the last smile than the first laughter. Behind the cloud is the sun still shining."
@@ -93,6 +94,7 @@ function Rendering() {
 								});
 							});
 							setScriptAnalize(tmpScriptAnalize);
+							setStep(1);
 						});
 					}}
 				>
@@ -100,6 +102,7 @@ function Rendering() {
 				</Button>
 				<Button
 					variant="contained"
+					disabled={!(step >= 1)}
 					onClick={() => {
 						const tmpScriptAnalize = [...scriptAnalize];
 
@@ -112,12 +115,14 @@ function Rendering() {
 								s.keywords = keywordsList[i];
 							});
 							setScriptAnalize(tmpScriptAnalize);
+							setStep(2);
 						});
 					}}
 				>
 					키워드 가져오기
 				</Button>
 				<Button
+					disabled={!(step >= 2)}
 					variant="contained"
 					onClick={() => {
 						const tmpScriptAnalize = [...scriptAnalize];
@@ -132,6 +137,7 @@ function Rendering() {
 							});
 							console.log(tmpScriptAnalize);
 							setScriptAnalize(tmpScriptAnalize);
+							setStep(3);
 						});
 					}}
 				>
