@@ -33,10 +33,10 @@ const useStyles = makeStyles({
 		marginTop: '60px',
 		marginRight: '50px',
 		height: '40vh',
-  },
-  videoImg: {
-    width: '38vw',
-  },
+	},
+	videoImg: {
+		width: '38vw',
+	},
 	tableBox: {
 		width: '38vw',
 		alignSelf: 'flex-start',
@@ -53,7 +53,7 @@ function Rendering() {
 	const [step, setStep] = useState(0);
 
 	const [scriptText, setScriptText] = useState(
-		'There is no place like home. Love will find a way. ' //Slow and steady win the game. Life's not all gloom and despondency. Age does not protect you from love. Believe you can, then you will. If I have lost confidence in myself, I have the universe against me. Hold it high, look the world straight in the eye. Better the last smile than the first laughter. Behind the cloud is the sun still shining."
+		'Junction X Seoul was held on October 9. It involves many designers and developers. JunctionX Seoul hackathon was going online, due to the COVID-19 outbreak. Junction X Seoul has 4 tracks microsoft, sia, rakuten API and naver-z. It has 5 missions, and now it has even done mission 3. It has various events like yoga. Participating in the event gives a lot of gifts. It ends on October 11.' //Slow and steady win the game. Life's not all gloom and despondency. Age does not protect you from love. Believe you can, then you will. If I have lost confidence in myself, I have the universe against me. Hold it high, look the world straight in the eye. Better the last smile than the first laughter. Behind the cloud is the sun still shining."
 	);
 	const [scriptAnalize, setScriptAnalize] = useState([]);
 
@@ -64,6 +64,8 @@ function Rendering() {
 	}, []);
 
 	useEffect(() => {
+		if (soundPool) soundPool.stopAll();
+
 		if (0 <= videoSeek && videoSeek < scriptAnalize.length) {
 			const obj = scriptAnalize[videoSeek];
 			soundPool.play(obj.index);
@@ -71,11 +73,10 @@ function Rendering() {
 				if (scriptAnalize.length - 1 <= videoSeek) setVideoSeek(-1);
 				else setVideoSeek(videoSeek + 1);
 			}, obj.duration * 1000);
+		} else if (videoSeek === -1) {
+			clearTimeout(timeout);
 		} else {
-			if (soundPool) {
-				clearTimeout(timeout);
-				soundPool.stopAll();
-			}
+			setVideoSeek(-1);
 		}
 	}, [videoSeek, soundPool, scriptAnalize]);
 
@@ -186,8 +187,8 @@ function Rendering() {
 			<div className="flexible">
 				<div className={classes.videoBox}>
 					<img
-            alt="img"
-            className={classes.videoImg}
+						alt="img"
+						className={classes.videoImg}
 						src={
 							0 <= videoSeek &&
 							videoSeek < scriptAnalize.length &&
