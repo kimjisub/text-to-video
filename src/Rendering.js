@@ -33,7 +33,10 @@ const useStyles = makeStyles({
 		marginTop: '60px',
 		marginRight: '50px',
 		height: '40vh',
-	},
+  },
+  videoImg: {
+    width: '38vw',
+  },
 	tableBox: {
 		width: '38vw',
 		alignSelf: 'flex-start',
@@ -183,7 +186,8 @@ function Rendering() {
 			<div className="flexible">
 				<div className={classes.videoBox}>
 					<img
-						alt="img"
+            alt="img"
+            className={classes.videoImg}
 						src={
 							0 <= videoSeek &&
 							videoSeek < scriptAnalize.length &&
