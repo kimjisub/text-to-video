@@ -1,3 +1,4 @@
+/* eslint-disable no-unreachable */
 import unirest from 'unirest';
 
 function shuffleArray(array) {
@@ -12,7 +13,18 @@ function shuffleArray(array) {
 export default class Keyword {
 	async getKeywords(text) {
 		return new Promise((resolve, reject) => {
-			return resolve(shuffleArray(['love', 'home', 'cat', 'dog']));
+			return resolve(
+				shuffleArray([
+					'love',
+					'home',
+					'cat',
+					'dog',
+					'game',
+					'age',
+					'sky',
+					'smile',
+				])
+			);
 			const req = unirest(
 				'POST',
 				'https://textanalysis-keyword-extraction-v1.p.rapidapi.com/keyword-extractor-text'

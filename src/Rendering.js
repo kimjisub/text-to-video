@@ -137,8 +137,6 @@ function Rendering() {
 						<TableHead>
 							<TableRow>
 								<TableCell>Play</TableCell>
-								<TableCell>Index</TableCell>
-								<TableCell>Audio</TableCell>
 								<TableCell>Script</TableCell>
 								<TableCell>Duration</TableCell>
 								<TableCell>Keyword</TableCell>
@@ -158,10 +156,7 @@ function Rendering() {
 											{i === videoSeek ? <Pause /> : <PlayArrow />}
 										</IconButton>
 									</TableCell>
-									<TableCell component="th" scope="row">
-										{i + 1}
-									</TableCell>
-									<TableCell component="th" scope="row">
+									<TableCell>
 										<IconButton
 											onClick={() => {
 												soundPool.play(row.index);
@@ -169,8 +164,8 @@ function Rendering() {
 										>
 											<VolumeUp />
 										</IconButton>
+										{row.script}
 									</TableCell>
-									<TableCell>{row.script}</TableCell>
 									<TableCell>{row.duration}</TableCell>
 									<TableCell>{row.keywords?.join()}</TableCell>
 									<TableCell>
