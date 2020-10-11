@@ -26,7 +26,6 @@ export default class ImageSearch {
 			});
 			req.end(function (res) {
 				if (res.error) throw new Error(res.error);
-
 				resolve(res.body.value.map((item) => item.contentUrl));
 			});
 		});

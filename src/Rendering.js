@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import SoundPool from './api/SoundPool';
 import Keyword from './api/Keyword';
 import ImageSearch from './api/ImageSearch';
+import Scripts from './data/Scripts';
 
 import {
 	TextField,
@@ -20,8 +21,9 @@ import {
 	InputLabel,
 	FormControl,
 } from '@material-ui/core';
-import { VolumeUp, PlayArrow, Pause } from '@material-ui/icons';
+import { PlayArrow, Pause } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
+import sleep from './api/Sleep';
 
 const useStyles = makeStyles({
 	formControl: {
@@ -54,16 +56,6 @@ const useStyles = makeStyles({
 	},
 });
 
-const scripts = {
-	'': '',
-	'Covid-19':
-		'As of the Chuseok and Hangeul Day holidays, the confirmed coronavirus 19 (COVID-19) remains in double digits. So there is a growing likelihood that the government will ease the distancing steps applied from the 12th.',
-	Flower:
-		'You can cut all the flowers. but you can not keep spring from coming.',
-	Phrase:
-		"There is no place like home. Love will find a way. Slow and steady win the game. Life's not all gloom and despondency. Age does not protect you from love. Believe you can, then you will. If I have lost confidence in myself, I have the universe against me. Hold it high, look the world straight in the eye. Better the last smile than the first laughter. Behind the cloud is the sun still shining. ",
-};
-
 let timeout = -1;
 function Rendering() {
 	const [soundPool, setSoundPool] = useState(null);
@@ -71,6 +63,7 @@ function Rendering() {
 	const [imageSearch, setImageSearch] = useState(null);
 	const [videoSeek, setVideoSeek] = useState(-1);
 	const [step, setStep] = useState(0);
+	const [processing, setProcessing] = useState(false);
 
 	const [scriptText, setScriptText] = useState('');
 	const [scriptAnalize, setScriptAnalize] = useState([]);
@@ -111,10 +104,10 @@ function Rendering() {
 					<InputLabel id="demo-simple-select-label">Select Preset</InputLabel>
 					<Select
 						onChange={(event) => {
-							setScriptText(scripts[event.target.value]);
+							setScriptText(Scripts[event.target.value]);
 						}}
 					>
-						{Object.keys(scripts).map((k) => (
+						{Object.keys(Scripts).map((k) => (
 							<MenuItem value={k} key={k}>
 								{k === '' ? 'Custom' : k}
 							</MenuItem>
@@ -140,7 +133,11 @@ function Rendering() {
 				<div className="flexible flex_col">
 					<Button
 						variant="contained"
+						disabled={!!processing}
 						onClick={() => {
+							if (processing) return;
+							setProcessing(true);
+
 							const scriptList = scriptText
 								.trim()
 								.split('.')
@@ -159,10 +156,13 @@ function Rendering() {
 										script,
 										index,
 										duration: soundPool.getDuration(index).toFixed(1),
+										keywords: [],
+										images: [],
 									});
 								});
 								setScriptAnalize(tmpScriptAnalize);
 								setStep(1);
+								setProcessing(false);
 							});
 						}}
 					>
@@ -170,50 +170,41 @@ function Rendering() {
 					</Button>
 					<Button
 						variant="contained"
-						disabled={!(step >= 1)}
-						onClick={() => {
-							const tmpScriptAnalize = [...scriptAnalize];
+						disabled={!(step >= 1 && !processing)}
+						onClick={async () => {
+							if (processing) return;
+							setProcessing(true);
 
-							const apiWork = scriptAnalize.map((s) =>
-								keyword.getKeywords(s.script)
-							);
-
-							Promise.all(apiWork).then((keywordsList) => {
-								tmpScriptAnalize.forEach((s, i) => {
-									s.keywords = keywordsList[i];
-								});
-								setScriptAnalize(tmpScriptAnalize);
-								setStep(2);
-							});
+							for (let i in scriptAnalize) {
+								const script = scriptAnalize[i];
+								script.keywords = await keyword.getKeywords(script.script);
+								setScriptAnalize(scriptAnalize);
+								await sleep(1500);
+							}
+							setStep(2);
+							setProcessing(false);
 						}}
 					>
 						Bring Keyword
 					</Button>
 					<Button
 						variant="contained"
-						disabled={!(step >= 2)}
+						disabled={!(step >= 2 && !processing)}
 						onClick={async () => {
-							//const tmpScriptAnalize = [...scriptAnalize];
-
-							// const apiWork = scriptAnalize.map((s) =>
-							// 	imageSearch.getImages(s.keywords[0])
-							// );
-
-							// Promise.all(apiWork).then((imagesList) => {
-							// 	tmpScriptAnalize.forEach((s, i) => {
-							// 		s.images = imagesList[i];
-							// 	});
-							// 	console.log(tmpScriptAnalize);
-							// 	setScriptAnalize(tmpScriptAnalize);
-							// 	setStep(3);
-							// });
+							if (processing) return;
+							setProcessing(true);
 
 							for (let i in scriptAnalize) {
 								const script = scriptAnalize[i];
-								script.images = await imageSearch.getImages(script.keywords[0]);
+								if (script.keywords[0])
+									script.images = await imageSearch.getImages(
+										script.keywords[0]
+									);
 								setScriptAnalize(scriptAnalize);
+								await sleep(1000);
 							}
 							setStep(3);
+							setProcessing(false);
 						}}
 					>
 						Bring Images
@@ -264,12 +255,12 @@ function Rendering() {
 											soundPool.play(row.index);
 										}}
 									>
-										<div>{row.script}</div>
+										<p style={{ 'text-overflow': 'ellipsis' }}>{row.script}</p>
 									</TableCell>
 									<TableCell>{row.duration}</TableCell>
-									<TableCell>{row.keywords?.join()}</TableCell>
+									<TableCell>{row.keywords[0]}</TableCell>
 									<TableCell>
-										{row.images ? (
+										{row.images[0] ? (
 											<img alt="img" src={row.images[0]} width="100px"></img>
 										) : null}
 									</TableCell>
