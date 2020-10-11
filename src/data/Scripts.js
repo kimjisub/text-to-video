@@ -2,8 +2,6 @@ export default {
 	'': '',
 	'Covid-19':
 		'As of the Chuseok and Hangeul Day holidays, the confirmed coronavirus 19 (COVID-19) remains in double digits. So there is a growing likelihood that the government will ease the distancing steps applied from the 12th.',
-	Flower:
-		'You can cut all the flowers. but you can not keep spring from coming.',
 	Phrase:
 		"There is no place like home. Love will find a way. Slow and steady win the game. Life's not all gloom and despondency. Age does not protect you from love. Believe you can, then you will. If I have lost confidence in myself, I have the universe against me. Hold it high, look the world straight in the eye. Better the last smile than the first laughter. Behind the cloud is the sun still shining. ",
 	Netherlands: `The Netherlands should return looted art to its former colonies: That’s the official recommendation of an advisory committee to the Dutch government.
