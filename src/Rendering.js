@@ -115,14 +115,14 @@ function Rendering() {
                   tmpScriptAnalize.push({
                     script,
                     index,
-                    duration: soundPool.getDuration(index),
+                    duration: soundPool.getDuration(index).toFixed(1),
                   });
                 });
                 setScriptAnalize(tmpScriptAnalize);
               });
             }}
           >
-            TTS, 소리 길이 가져오기
+            Bring TTS, Sound length
           </Button>
           <Button
             variant="contained"
@@ -132,7 +132,7 @@ function Rendering() {
               const apiWork = scriptAnalize.map((s) =>
                 keyword.getKeywords(s.script)
               );
-              
+
               Promise.all(apiWork).then((keywordsList) => {
                 tmpScriptAnalize.forEach((s, i) => {
                   s.keywords = keywordsList[i];
@@ -141,7 +141,7 @@ function Rendering() {
               });
             }}
           >
-            키워드 가져오기
+            Bring Keyword
           </Button>
           <Button
             variant="contained"
@@ -161,7 +161,7 @@ function Rendering() {
               });
             }}
           >
-            이미지 가져오기
+            Bring Images
           </Button>
         </div>
 			</div>
