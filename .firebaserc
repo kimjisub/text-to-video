@@ -1,0 +1,15 @@
+  
+{
+  "projects": {
+    "default": "text-to-video-dbfc7"
+  },
+  "targets": {
+    "text-to-video-dbfc7": {
+      "hosting": {
+        "text-to-video-dbfc7": [
+          "text-to-video-dbfc7"
+        ]
+      }
+    }
+  }
+}
